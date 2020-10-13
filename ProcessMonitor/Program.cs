@@ -38,6 +38,7 @@ namespace ConsoleApp1
                 {
                     lock (lkey)
                     {
+                        Console.CursorVisible = false;
                         var ps = Process.GetProcesses();
                         if (dec)
                         {
@@ -72,7 +73,7 @@ namespace ConsoleApp1
                         Console.WriteLine($"            total: {ps.Length,15} processes, {ps.Select(p => p.Threads.Count).Sum(),10} threads");
                         Console.WriteLine($"            query: {(query.Length==0?"null":query),5}, sort: {(orderby.Length == 0 ? "null" : orderby)}, press tab to toggle descending/ascending");
                         Console.WriteLine("            Press up/down array to explore other processes, esc for cammnad mod, ctrl + c to shut down");
-                        for (int i = 0; i <Console.WindowHeight -  (min+top+3); i++)
+                        for (int i = 0; i <Console.WindowHeight -  (min+top+3 + 1); i++)
                         {
                             ClearLineAfter(0, min + top + 3 + i);
                         }
@@ -103,6 +104,7 @@ namespace ConsoleApp1
                     }
                     else if (key.Key == ConsoleKey.Escape)
                     {
+                        Console.CursorVisible = true;
                         Console.SetCursorPosition(3, Console.CursorTop);
                         Console.Write("Enter Command: ");
                         var cmd = Console.ReadLine();
