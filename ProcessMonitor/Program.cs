@@ -56,7 +56,7 @@ namespace ConsoleApp1
                         var top = 3;
                         for (int i = ci; i < ci + min; i++)
                         {
-                            ClearLine(i - ci + top);
+                            Console.SetCursorPosition(0, i - ci + top);
                             try
                             {
                                 var item = ps[i];
@@ -67,8 +67,9 @@ namespace ConsoleApp1
                             {
                             }
                         }
-                        ClearLine(min + top);
-                        Console.WriteLine($"            total: {ps.Length,15} processes, {ps.Select(p => p.Threads.Count).Sum()} threads");
+                        Console.SetCursorPosition(0, min+top);
+                        //ClearLine(min + top);
+                        Console.WriteLine($"            total: {ps.Length,15} processes, {ps.Select(p => p.Threads.Count).Sum(),10} threads");
                         Console.WriteLine($"            query: {(query.Length==0?"null":query),5}, sort: {(orderby.Length == 0 ? "null" : orderby)}, press tab to toggle descending/ascending");
                         Console.WriteLine("            Press up/down array to explore other processes, esc for cammnad mod, ctrl + c to shut down");
                     }
