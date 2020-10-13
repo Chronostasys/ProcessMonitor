@@ -6,9 +6,9 @@ A light weight, cross platform, console based process monitor which support basi
 
 ## Commands
 
-- find <name>:
+- find `name`:  
   find processes by name
-- sort <prop>:
+- sort `prop`:  
   prop is name|id|thread|mem
-- kill <id>
+- kill `id`:  
   id is process id
