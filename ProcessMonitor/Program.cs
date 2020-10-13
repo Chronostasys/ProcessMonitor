@@ -24,41 +24,53 @@ namespace ConsoleApp1
         static void Main(string[] args)
         {
             Console.Clear();
+            var lkey = new object();
             int init = 0;
             int psnum = 0;
             int min = 0;
-            bool pause = false;
             string query = "";
+            string orderby = "";
+            bool dec = false;
+            Func<Process, object> orderFunc = p=>p.ProcessName;
             Task.Run(async () =>
             {
                 WriteHeader();
                 while (true)
                 {
-                    if (pause)
+                    lock (lkey)
                     {
-                        continue;
-                    }
-                    var ps = Process.GetProcesses().Where(p=>p.ProcessName.Contains(query)).ToArray();
-                    psnum = ps.Length;
-                    var ci = init;
-                    min = Console.WindowHeight - 10;
-                    var top = 3;
-                    for (int i = ci; i < ci + min; i++)
-                    {
-                        ClearLine(i - ci+top);
-                        try
+                        var ps = Process.GetProcesses();
+                        if (dec)
                         {
-                            var item = ps[i];
-                            var name = item.ProcessName.Length < 30 ? item.ProcessName : item.ProcessName.Substring(0, 27) + "...";
-                            Console.WriteLine($"{name, 30}|{item.Id,20}|{item.Threads.Count,10}|{item.PrivateMemorySize64,15}");
+                            ps = ps.Where(p => p.ProcessName.ToLower().Contains(query))
+                                .OrderByDescending(orderFunc).ToArray();
                         }
-                        catch (Exception)
+                        else
                         {
+                            ps = ps.Where(p => p.ProcessName.ToLower().Contains(query))
+                                .OrderBy(orderFunc).ToArray();
                         }
+                        psnum = ps.Length;
+                        var ci = init;
+                        min = Console.WindowHeight - 10;
+                        var top = 3;
+                        for (int i = ci; i < ci + min; i++)
+                        {
+                            ClearLine(i - ci + top);
+                            try
+                            {
+                                var item = ps[i];
+                                var name = item.ProcessName.Length < 30 ? item.ProcessName : item.ProcessName.Substring(0, 27) + "...";
+                                Console.WriteLine($"{name,30}|{item.Id,20}|{item.Threads.Count,10}|{item.PrivateMemorySize64,15}");
+                            }
+                            catch (Exception)
+                            {
+                            }
+                        }
+                        ClearLine(min + top);
+                        Console.WriteLine($"            total: {ps.Length,15} processes, {ps.Select(p => p.Threads.Count).Sum()} threads");
+                        Console.WriteLine("             Press up/down array to explore other processes, esc for cammnad mod, ctrl + c to shut down");
                     }
-                    ClearLine(min + top);
-                    Console.WriteLine($"            total: {ps.Length,15} processes, {ps.Select(p=>p.Threads.Count).Sum()} threads");
-                    Console.WriteLine("             Press up/down array to explore other processes, esc for cammnad mod, ctrl + c to shut down");
                     await Task.Delay(50);
                 }
             });
@@ -81,23 +93,50 @@ namespace ConsoleApp1
                 }
                 else if (key.Key == ConsoleKey.Escape)
                 {
-                    pause = true;
-                    var cmd = Console.ReadLine();
-                    var cmds = cmd.Split(' ');
-                    switch (cmds[0])
+                    lock (lkey)
                     {
-                        case "find":
-                            query = cmd.Substring(5, cmd.Length - 5).Trim('"');
-                            break;
-                        default:
-                            query = "";
-                            break;
+                        var cmd = Console.ReadLine();
+                        var cmds = cmd.Split(' ');
+                        switch (cmds[0])
+                        {
+                            case "find":
+                                query = cmd.Substring(5, cmd.Length - 5).Trim('"').ToLower();
+                                break;
+                            case "sort":
+                                orderby = cmd.Substring(5, cmd.Length - 5).Trim('"').ToLower();
+                                switch (orderby)
+                                {
+                                    case "mem":
+                                        orderFunc = p => p.PrivateMemorySize64;
+                                        break;
+                                    case "thread":
+                                        orderFunc = p => p.Threads.Count;
+                                        break;
+                                    case "id":
+                                        orderFunc = p => p.Id;
+                                        break;
+                                    case "name":
+                                        orderFunc = p => p.ProcessName;
+                                        break;
+                                    default:
+                                        orderFunc = p => p.ProcessName;
+                                        break;
+                                }
+                                
+                                break;
+                            default:
+                                query = "";
+                                break;
+                        }
+                        Console.Clear();
+                        Console.WriteLine("a");
+                        init = 0;
+                        WriteHeader();
                     }
-                    Console.Clear();
-                    Console.WriteLine("a");
-                    init = 0;
-                    WriteHeader();
-                    pause = false;
+                }
+                else if (key.Key == ConsoleKey.Tab)
+                {
+                    dec = !dec;
                 }
             }
 
