@@ -131,7 +131,6 @@ namespace ConsoleApp1
                                 break;
                         }
                         Console.Clear();
-                        Console.WriteLine("a");
                         init = 0;
                         WriteHeader();
                     }
