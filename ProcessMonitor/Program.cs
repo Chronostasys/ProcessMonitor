@@ -76,25 +76,27 @@ namespace ConsoleApp1
             });
             while (true)
             {
-                var key = Console.ReadKey();
-                if (key.Key == ConsoleKey.UpArrow)
+                var key = Console.ReadKey(true);
+                lock (lkey)
                 {
-                    if (init != 0)
+                    if (key.Key == ConsoleKey.UpArrow)
                     {
-                        init--;
+                        if (init != 0)
+                        {
+                            init--;
+                        }
                     }
-                }
-                else if (key.Key == ConsoleKey.DownArrow)
-                {
-                    if (init + min < psnum)
+                    else if (key.Key == ConsoleKey.DownArrow)
                     {
-                        init++;
+                        if (init + min < psnum)
+                        {
+                            init++;
+                        }
                     }
-                }
-                else if (key.Key == ConsoleKey.Escape)
-                {
-                    lock (lkey)
+                    else if (key.Key == ConsoleKey.Escape)
                     {
+                        Console.SetCursorPosition(3, Console.CursorTop);
+                        Console.Write("Enter Command: ");
                         var cmd = Console.ReadLine();
                         var cmds = cmd.Split(' ');
                         switch (cmds[0])
@@ -122,7 +124,7 @@ namespace ConsoleApp1
                                         orderFunc = p => p.ProcessName;
                                         break;
                                 }
-                                
+
                                 break;
                             default:
                                 query = "";
@@ -133,10 +135,10 @@ namespace ConsoleApp1
                         init = 0;
                         WriteHeader();
                     }
-                }
-                else if (key.Key == ConsoleKey.Tab)
-                {
-                    dec = !dec;
+                    else if (key.Key == ConsoleKey.Tab)
+                    {
+                        dec = !dec;
+                    }
                 }
             }
 
