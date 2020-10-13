@@ -14,6 +14,13 @@ namespace ConsoleApp1
             Console.Write(new string(' ', Console.WindowWidth));
             Console.SetCursorPosition(0, line);
         }
+        static void WriteHeader()
+        {
+            Console.SetCursorPosition(0, 0);
+            Console.WriteLine("                        *************Process Monitor*************");
+            Console.WriteLine("                        Author: Chronostasys, ver 1.0.0");
+            Console.WriteLine($"{"Name",30}|{"Id",20}|{"Threads",10}|{"Private mem",15}");
+        }
         static void Main(string[] args)
         {
             Console.Clear();
@@ -21,18 +28,17 @@ namespace ConsoleApp1
             int psnum = 0;
             int min = 0;
             bool pause = false;
+            string query = "";
             Task.Run(async () =>
             {
-                Console.WriteLine("                        *************Process Monitor*************");
-                Console.WriteLine("                        Author: Chronostasys, ver 1.0.0");
-                Console.WriteLine($"{"Name",30}|{"Id",20}|{"Threads",10}|{"Private mem",15}");
+                WriteHeader();
                 while (true)
                 {
                     if (pause)
                     {
                         continue;
                     }
-                    var ps = Process.GetProcesses();
+                    var ps = Process.GetProcesses().Where(p=>p.ProcessName.Contains(query)).ToArray();
                     psnum = ps.Length;
                     var ci = init;
                     min = Console.WindowHeight - 10;
@@ -52,7 +58,7 @@ namespace ConsoleApp1
                     }
                     ClearLine(min + top);
                     Console.WriteLine($"            total: {ps.Length,15} processes, {ps.Select(p=>p.Threads.Count).Sum()} threads");
-                    Console.WriteLine("             Press up/down array to explore other processes, enter ctrl + c to shut down");
+                    Console.WriteLine("             Press up/down array to explore other processes, esc for cammnad mod, ctrl + c to shut down");
                     await Task.Delay(50);
                 }
             });
@@ -75,7 +81,23 @@ namespace ConsoleApp1
                 }
                 else if (key.Key == ConsoleKey.Escape)
                 {
+                    pause = true;
                     var cmd = Console.ReadLine();
+                    var cmds = cmd.Split(' ');
+                    switch (cmds[0])
+                    {
+                        case "find":
+                            query = cmd.Substring(5, cmd.Length - 5).Trim('"');
+                            break;
+                        default:
+                            query = "";
+                            break;
+                    }
+                    Console.Clear();
+                    Console.WriteLine("a");
+                    init = 0;
+                    WriteHeader();
+                    pause = false;
                 }
             }
 
