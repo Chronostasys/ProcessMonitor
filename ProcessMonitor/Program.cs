@@ -72,7 +72,7 @@ namespace ConsoleApp1
                         Console.WriteLine($"            query: {(query.Length==0?"null":query),5}, sort: {(orderby.Length == 0 ? "null" : orderby)}, press tab to toggle descending/ascending");
                         Console.WriteLine("            Press up/down array to explore other processes, esc for cammnad mod, ctrl + c to shut down");
                     }
-                    await Task.Delay(50);
+                    await Task.Delay(100);
                 }
             });
             while (true)
@@ -126,6 +126,10 @@ namespace ConsoleApp1
                                         break;
                                 }
 
+                                break;
+                            case "kill":
+                                var num = int.Parse(cmd.Substring(5, cmd.Length - 5).Trim('"').ToLower());
+                                Process.GetProcessById(num).Kill();
                                 break;
                             default:
                                 query = "";
