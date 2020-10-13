@@ -26,7 +26,7 @@ namespace ConsoleApp1
         {
             Console.SetCursorPosition(0, 0);
             Console.WriteLine("                        *************Process Monitor*************");
-            Console.WriteLine("                        Author: Chronostasys, ver 1.0.0");
+            Console.WriteLine("                        Author: Chronostasys & leezeeyee, ver 1.0.0");
             Console.WriteLine("                        *****************************************");
 
         }
@@ -42,6 +42,7 @@ namespace ConsoleApp1
             string query = "";
             string orderby = "name";
             bool dec = false;
+            int prevHeight = Console.WindowHeight;
             Func<Process, object> orderFunc = p => p.ProcessName;
             WriteHeader();
             Task.Run(async () =>
@@ -51,6 +52,14 @@ namespace ConsoleApp1
                     
                     lock (lkey)
                     {
+                        if (prevHeight!=Console.WindowHeight)
+                        {
+                            Console.Clear();
+                            WriteHeader();
+                        }
+                        prevHeight = Console.WindowHeight;
+                        Console.WindowTop = 0;
+                        Console.CursorVisible = false;
                         Console.SetCursorPosition(0, cmdLine);
                         
                         //recording the num of last ps
@@ -167,6 +176,7 @@ namespace ConsoleApp1
                     }
                     else if (key.Key == ConsoleKey.Escape)
                     {
+                        Console.CursorVisible = true;
 
                         Console.SetCursorPosition(0, cmdLine);// Console.CursorTop);
                         Console.Write("Enter Command(q to quit): ");
