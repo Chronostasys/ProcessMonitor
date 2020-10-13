@@ -8,11 +8,10 @@ namespace ConsoleApp1
 {
     class Program
     {
-        static void ClearLine(int line)
+        static void ClearLineAfter(int startPos,int line)
         {
-            Console.SetCursorPosition(0, line);
+            Console.SetCursorPosition(startPos, line);
             Console.Write(new string(' ', Console.WindowWidth));
-            Console.SetCursorPosition(0, line);
         }
         static void WriteHeader()
         {
@@ -62,6 +61,7 @@ namespace ConsoleApp1
                                 var item = ps[i];
                                 var name = item.ProcessName.Length < 30 ? item.ProcessName : item.ProcessName.Substring(0, 27) + "...";
                                 Console.WriteLine($"{name,30}|{item.Id,10}|{item.Threads.Count,10}|{item.WorkingSet64,15}");
+                                ClearLineAfter(Console.CursorLeft, Console.CursorTop);
                             }
                             catch (Exception)
                             {
@@ -72,6 +72,12 @@ namespace ConsoleApp1
                         Console.WriteLine($"            total: {ps.Length,15} processes, {ps.Select(p => p.Threads.Count).Sum(),10} threads");
                         Console.WriteLine($"            query: {(query.Length==0?"null":query),5}, sort: {(orderby.Length == 0 ? "null" : orderby)}, press tab to toggle descending/ascending");
                         Console.WriteLine("            Press up/down array to explore other processes, esc for cammnad mod, ctrl + c to shut down");
+                        for (int i = 0; i <Console.WindowHeight -  (min+top+3); i++)
+                        {
+                            ClearLineAfter(0, min + top + 3 + i);
+                        }
+                        Console.SetCursorPosition(0, min + top + 3);
+                        Console.WindowTop = 0;
                     }
                     await Task.Delay(100);
                 }
