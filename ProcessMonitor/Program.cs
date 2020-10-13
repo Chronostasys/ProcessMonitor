@@ -29,7 +29,7 @@ namespace ConsoleApp1
             int psnum = 0;
             int min = 0;
             string query = "";
-            string orderby = "";
+            string orderby = "name";
             bool dec = false;
             Func<Process, object> orderFunc = p=>p.ProcessName;
             Task.Run(async () =>
@@ -69,7 +69,8 @@ namespace ConsoleApp1
                         }
                         ClearLine(min + top);
                         Console.WriteLine($"            total: {ps.Length,15} processes, {ps.Select(p => p.Threads.Count).Sum()} threads");
-                        Console.WriteLine("             Press up/down array to explore other processes, esc for cammnad mod, ctrl + c to shut down");
+                        Console.WriteLine($"            query: {(query.Length==0?"null":query),5}, sort: {(orderby.Length == 0 ? "null" : orderby)}, press tab to toggle descending/ascending");
+                        Console.WriteLine("            Press up/down array to explore other processes, esc for cammnad mod, ctrl + c to shut down");
                     }
                     await Task.Delay(50);
                 }
