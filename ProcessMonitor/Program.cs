@@ -19,7 +19,7 @@ namespace ConsoleApp1
             Console.SetCursorPosition(0, 0);
             Console.WriteLine("                        *************Process Monitor*************");
             Console.WriteLine("                        Author: Chronostasys, ver 1.0.0");
-            Console.WriteLine($"{"Name",30}|{"Id",20}|{"Threads",10}|{"Ram mem",15}");
+            Console.WriteLine($"{"Name",30}|{"Id",10}|{"Threads",10}|{"Ram mem",15}");
         }
         static void Main(string[] args)
         {
@@ -61,7 +61,7 @@ namespace ConsoleApp1
                             {
                                 var item = ps[i];
                                 var name = item.ProcessName.Length < 30 ? item.ProcessName : item.ProcessName.Substring(0, 27) + "...";
-                                Console.WriteLine($"{name,30}|{item.Id,20}|{item.Threads.Count,10}|{item.WorkingSet64,15}");
+                                Console.WriteLine($"{name,30}|{item.Id,10}|{item.Threads.Count,10}|{item.WorkingSet64,15}");
                             }
                             catch (Exception)
                             {
